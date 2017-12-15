@@ -41,7 +41,10 @@ module Pundit
     end
 
     def context
-      { current_user: current_user, policy_used: -> { @policy_used = true } }
+      {
+        current_user: -> { current_user },
+        policy_used:  -> { @policy_used = true }
+      }
     end
   end
 end

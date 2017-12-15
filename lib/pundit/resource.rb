@@ -17,7 +17,7 @@ module Pundit
 
         context = options[:context]
         context[:policy_used]&.call
-        Pundit.policy_scope!(context[:current_user], _model_class)
+        Pundit.policy_scope!(context[:current_user]&.call, _model_class)
       end
 
       private
@@ -41,7 +41,7 @@ module Pundit
     end
 
     def current_user
-      context&.[](:current_user)
+      context&.[](:current_user)&.call
     end
 
     def policy
@@ -73,7 +73,7 @@ module Pundit
       when JSONAPI::Relationship::ToMany
         records = _model.public_send(association_name)
         policy_scope = Pundit.policy_scope!(
-          context[:current_user],
+          current_user,
           records
         )
         records.merge(policy_scope)
@@ -82,7 +82,7 @@ module Pundit
 
         # Don't rely on policy.show? being defined since it isn't used for
         # show actions directly and should always have the same behaviour.
-        if record && show?(Pundit.policy!(context[:current_user], record), record.id)
+        if record && show?(Pundit.policy!(current_user, record), record.id)
           record
         else
           nil

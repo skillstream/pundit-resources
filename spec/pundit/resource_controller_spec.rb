@@ -13,7 +13,7 @@ RSpec.describe Pundit::ResourceController do
     it "provides the current_user" do
       user = Object.new
       allow(controller).to receive(:current_user).and_return(user)
-      expect(controller.send(:context)[:current_user]).to eq user
+      expect(controller.send(:context)[:current_user].call).to eq user
     end
 
     it "is protected" do
